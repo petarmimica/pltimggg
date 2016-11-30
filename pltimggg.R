@@ -1,8 +1,11 @@
-pltimggg.plot2D <- function(x, y, z, xlim = c(0, 0), ylim = c(0, 0), zlim = c(0, 0), xlab = "x", ylab = "y", zlab = "z", colours = NULL, zbarwidth = 20, zbarheight = 1, ztitleposition = "top", ztitlehjust = 0.5, ztitlevjust = 0.5, legend.position = "bottom", legend.direction = "horizontal", zlog = FALSE, conv.kernel = NULL, zlinformat = FALSE, zdigits = 3) {
+pltimggg.plot2D <- function(x, y, z, xlim = c(0, 0), ylim = c(0, 0), zlim = c(0, 0), xlab = "x", ylab = "y", zlab = "z", colours = NULL, zbarwidth = 20, zbarheight = 1, ztitleposition = "top", ztitlehjust = 0.5, ztitlevjust = 0.5, legend.position = "bottom", legend.direction = "horizontal", zlog = FALSE, conv.kernel = NULL, zlinformat = FALSE, zdigits = 1, ztitleorientation = NULL, theme = NULL) {
     
     # my theme
-    mytheme <-  theme_bw()+theme(axis.text=element_text(size=18))+theme(axis.title=element_text(size=18))+theme(axis.line=element_line(size=2))+theme(legend.text=element_text(size=16))+theme(legend.title=element_text(size=18))+theme(panel.grid.major = element_line(size=0.5, colour="gray"), panel.grid.minor = element_blank(), panel.border = element_blank(), panel.background = element_blank())
-    
+    if (is.null(theme)) {
+        mytheme <-  theme_bw()+theme(axis.text=element_text(size=18))+theme(axis.title=element_text(size=18))+theme(axis.line=element_line(size=2))+theme(legend.text=element_text(size=16))+theme(legend.title=element_text(size=18))+theme(panel.grid.major = element_line(size=0.5, colour="gray"), panel.grid.minor = element_blank(), panel.border = element_blank(), panel.background = element_blank())
+    } else {
+        mytheme <- theme
+    }
     # compute the limits
     if (xlim[1] == 0 && xlim[2] == 0) {
         # default: use min/max of x
@@ -71,7 +74,10 @@ pltimggg.plot2D <- function(x, y, z, xlim = c(0, 0), ylim = c(0, 0), zlim = c(0,
     }
     
     if (legend.direction == "vertical") {
-        titleangle <- 90
+        if (is.null(ztitleorientation))
+            titleangle <- 90
+        else
+            titleangle <- ztitleorientation
         if (zbarheight == 1)
             zbarheight <- 20
         if (zbarwidth == 20)
@@ -80,8 +86,13 @@ pltimggg.plot2D <- function(x, y, z, xlim = c(0, 0), ylim = c(0, 0), zlim = c(0,
             legend.position <- "right"
         if (ztitleposition == "top")
             ztitleposition <- "right"
-    } else
-        titleangle <- 0
+    } else {
+        if (is.null(ztitleorientation)) {
+            titleangle <- 0
+        } else {
+            titleangle <- ztitleorientation
+        }
+    }
     
     plt <- ggplot(data = df, aes(x = x, y = y, fill = z)) + mytheme + geom_tile() + coord_equal() + scale_x_continuous(limits = xlim, expand = c(0, 0)) + scale_y_continuous(limits = ylim, expand = c(0, 0)) + scale_fill_gradientn(labels = labels, colours = colours, guide = guide_colourbar(title = zlab, title.position = ztitleposition, title.hjust = ztitlehjust, title.vjust = ztitlevjust, barwidth = zbarwidth, barheight = zbarheight, title.theme = element_text(angle=titleangle)), limits = zlim) + theme(legend.position = legend.position, legend.direction = legend.direction) + xlab(xlab) + ylab(ylab)
     

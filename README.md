@@ -173,7 +173,7 @@ By default, the title is centered both horizontally and vertically
 ztitlehjust the value to 0, and for the right (right and top)
 justification set it to 1.
 
-Move the title to the top:
+Move the title to the bottom:
 
     pltimggg.plot2D(x, y, img, zlog=TRUE, legend.direction = "vertical", zlab="values", ztitlehjust = 0)
 
@@ -226,3 +226,36 @@ exmple, to use the minimal theme set theme to theme\_minimal():
 More information can be obtained by reading the ggplot documentation. Or
 you can copy the definition of "mytheme" from the plotimggg.R and create
 your own custom theme.
+
+### Spherical coordinates
+
+We can also provide the data in spherical coordinates. The routine
+creates an internal representation in the form of polygons and calls the
+ggplot geom\_polygon() routines. This is slowe, but it provides
+reasonable results.
+
+First, we create an array with spherical coordinates:
+
+    # define array dimensions
+    snx <- 100
+    sny <- 400
+
+    # axes limits
+    sxlim = c(1e0, 2e0)
+    sylim = c(0e0, 2 * pi)
+
+    # compute axes
+    sx <- (0 : (snx - 1)) * (sxlim[2] - sxlim[1]) / snx + sxlim[1]
+    sy <- (0 : (sny - 1)) * (sylim[2] - sylim[1]) / sny + sylim[1]
+
+    # declare array
+    simg <- array(1e0, c(snx, sny))
+
+    # fill array with random numbers in a certain interval
+    simg <- 10^(apply(simg, c(1, 2), function(x) {rnorm(1, 0.5, 0.3) }) * 2e0) * 1e-15
+
+Now we call the routine with the parameter igeom set to 2:
+
+    pltimggg.plot2D(sx, sy, simg, legend.direction = "vertical", igeom = 2, zlog=TRUE)
+
+![](README_files/figure-markdown_strict/unnamed-chunk-22-1.png)

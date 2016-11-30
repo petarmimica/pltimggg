@@ -118,9 +118,9 @@ The parameter has no effect when the powers of ten are used:
 
     pltimggg.plot2D(x, y, img, zlog=TRUE, legend.direction = "vertical", zdigits = 2)
 
-![](README_files/figure-markdown_strict/unnamed-chunk-10-1.png) \#\#\#\#
-zbarwidth and zbarheight: colourbar width and height, default: zbarwidth
-= 20, zbarheight = 1
+![](README_files/figure-markdown_strict/unnamed-chunk-10-1.png)
+
+#### zbarwidth and zbarheight: colourbar width and height, default: zbarwidth = 20, zbarheight = 1
 
 By default the colourbar is horizontal, its length is 20 (zbarwidth =
 20) and its thickness is 1 (zbarheight = 1). If legend.direction is set
@@ -169,12 +169,13 @@ may want to print the title horizontally and set ztitleorientation to 0:
 #### ztitlehjust and ztitlevjust: title horizontal and vertical justification, default: 0.5 both
 
 By default, the title is centered both horizontally and vertically
-(ztitlehjust = 0.5 and ztitlevjust = 0.5). To justify left (top), set
-the value to 0, and for the right bottm) justification set it to 1.
+(ztitlehjust = 0.5 and ztitlevjust = 0.5). To justify left (bottom), set
+ztitlehjust the value to 0, and for the right (right and top)
+justification set it to 1.
 
 Move the title to the top:
 
-    pltimggg.plot2D(x, y, img, zlog=TRUE, legend.direction = "vertical", zlab="values", ztitlevjust = 0)
+    pltimggg.plot2D(x, y, img, zlog=TRUE, legend.direction = "vertical", zlab="values", ztitlehjust = 0)
 
 ![](README_files/figure-markdown_strict/unnamed-chunk-15-1.png)
 

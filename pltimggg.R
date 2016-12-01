@@ -157,7 +157,7 @@ pltimggg.plot2D <- function(x, y, z, xlim = c(0, 0), ylim = c(0, 0), zlim = c(0,
         
         df <- merge(vals, pos, by = c("id"))
         
-        plt <- ggplot(data = df, aes(x = x, y = y)) + mytheme + geom_polygon(aes(fill = z, group=id), color=NA)  + coord_equal() + scale_x_continuous(limits = xlim, expand = c(0, 0)) + scale_y_continuous(limits = ylim, expand = c(0, 0)) + scale_fill_gradientn(labels = labels, colours = colours, guide = guide_colourbar(title = zlab, title.position = ztitleposition, title.hjust = ztitlehjust, title.vjust = ztitlevjust, barwidth = zbarwidth, barheight = zbarheight, title.theme = element_text(angle=titleangle)), limits = zlim) + theme(legend.position = legend.position, legend.direction = legend.direction) + xlab(xlab) + ylab(ylab)
+        plt <- ggplot(data = df, aes(x = x, y = y, group=id)) + mytheme + geom_polygon(aes(fill = z, color=z))  + coord_equal() + scale_x_continuous(limits = xlim, expand = c(0, 0)) + scale_y_continuous(limits = ylim, expand = c(0, 0)) + scale_fill_gradientn(labels = labels, colours = colours, guide = guide_colourbar(title = zlab, title.position = ztitleposition, title.hjust = ztitlehjust, title.vjust = ztitlevjust, barwidth = zbarwidth, barheight = zbarheight, title.theme = element_text(angle=titleangle)), limits = zlim) + theme(legend.position = legend.position, legend.direction = legend.direction) + xlab(xlab) + ylab(ylab) + scale_colour_gradientn(labels = labels, colours = colours, guide = guide_colourbar(title = zlab, title.position = ztitleposition, title.hjust = ztitlehjust, title.vjust = ztitlevjust, barwidth = zbarwidth, barheight = zbarheight, title.theme = element_text(angle=titleangle)), limits = zlim)
     }
     
     return(plt)

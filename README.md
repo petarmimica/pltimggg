@@ -252,10 +252,25 @@ First, we create an array with spherical coordinates:
     simg <- array(1e0, c(snx, sny))
 
     # fill array with random numbers in a certain interval
-    simg <- 10^(apply(simg, c(1, 2), function(x) {rnorm(1, 0.5, 0.3) }) * 2e0) * 1e-15
+    for (i in 1:snx) {
+        for (j in 1:sny) {
+            simg[i, j] = (rnorm(1, 1e1, 0.3))^2 * 1e10 * (cos(sy[j])^2 + 1e0)/ (sx[i]^2)
+        }
+    }
 
 Now we call the routine with the parameter igeom set to 2:
 
     pltimggg.plot2D(sx, sy, simg, legend.direction = "vertical", igeom = 2, zlog=TRUE)
 
 ![](README_files/figure-markdown_strict/unnamed-chunk-22-1.png)
+
+We can also plot just a small wedge:
+
+    pltimggg.plot2D(sx, sy[250:270], simg[,250:270], legend.direction = "vertical", igeom = 2, zlog=TRUE)
+
+![](README_files/figure-markdown_strict/unnamed-chunk-23-1.png) Or we
+can also plot everything but that small wedge:
+
+    pltimggg.plot2D(sx, sy[-(250:270)], simg[,-(250:270)], legend.direction = "vertical", igeom = 2, zlog=TRUE)
+
+![](README_files/figure-markdown_strict/unnamed-chunk-24-1.png)

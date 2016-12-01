@@ -56,16 +56,27 @@ pltimggg.plot2D <- function(x, y, z, xlim = c(0, 0), ylim = c(0, 0), zlim = c(0,
         dx <- x[2] - x[1]
         dy <- y[2] - y[1]
         
-        # generate four corners for each element (inner-left, inner-right, outer-left, outer-right)
-        exp.coords$xIL <- (exp.coords$Var1 - dx / 2) * sin(exp.coords$Var2 - dy / 2)
-        exp.coords$xIR <- (exp.coords$Var1 - dx / 2) * sin(exp.coords$Var2 + dy / 2)
-        exp.coords$xOL <- (exp.coords$Var1 + dx / 2) * sin(exp.coords$Var2 - dy / 2)
-        exp.coords$xOR <- (exp.coords$Var1 + dx / 2) * sin(exp.coords$Var2 + dy / 2)
-        exp.coords$yIL <- (exp.coords$Var1 - dx / 2) * cos(exp.coords$Var2 - dy / 2)
-        exp.coords$yIR <- (exp.coords$Var1 - dx / 2) * cos(exp.coords$Var2 + dy / 2)
-        exp.coords$yOL <- (exp.coords$Var1 + dx / 2) * cos(exp.coords$Var2 - dy / 2)
-        exp.coords$yOR <- (exp.coords$Var1 + dx / 2) * cos(exp.coords$Var2 + dy / 2)
+        exp.coords$rm <- exp.coords$Var1 - dx / 2
+        exp.coords$rp <- exp.coords$rm + dx
+        exp.coords$tm <- exp.coords$Var2 - dy / 2
+        exp.coords$tp <- exp.coords$tm + dy
+        exp.coords$stm <- sin(exp.coords$tm)
+        exp.coords$stp <- sin(exp.coords$tp)
+        exp.coords$ctm <- cos(exp.coords$tm)
+        exp.coords$ctp <- cos(exp.coords$tp)
         
+        # generate the four corners of each element (inner-left, inner-right, outer-left, outer-right)
+        exp.coords$xIL <- exp.coords$rm * exp.coords$stm
+        exp.coords$xIR <- exp.coords$rm * exp.coords$stp
+        exp.coords$xOL <- exp.coords$rp * exp.coords$stm
+        exp.coords$xOR <- exp.coords$rp * exp.coords$stp
+        exp.coords$yIL <- exp.coords$rm * exp.coords$ctm
+        exp.coords$yIR <- exp.coords$rm * exp.coords$ctp
+        exp.coords$yOL <- exp.coords$rp * exp.coords$ctm
+        exp.coords$yOR <- exp.coords$rp * exp.coords$ctp
+    
+            
+    
         # fake the limits
         exp.coords$Var1 = c(min(exp.coords$xIL), max(exp.coords$xOR))
         exp.coords$Var2 = c(min(exp.coords$yIL), max(exp.coords$yOL))
@@ -146,7 +157,7 @@ pltimggg.plot2D <- function(x, y, z, xlim = c(0, 0), ylim = c(0, 0), zlim = c(0,
         
         df <- merge(vals, pos, by = c("id"))
         
-        plt <- ggplot(data = df, aes(x = x, y = y)) + mytheme + geom_polygon(aes(fill = z, group=id)) + coord_equal() + scale_x_continuous(limits = xlim, expand = c(0, 0)) + scale_y_continuous(limits = ylim, expand = c(0, 0)) + scale_fill_gradientn(labels = labels, colours = colours, guide = guide_colourbar(title = zlab, title.position = ztitleposition, title.hjust = ztitlehjust, title.vjust = ztitlevjust, barwidth = zbarwidth, barheight = zbarheight, title.theme = element_text(angle=titleangle)), limits = zlim) + theme(legend.position = legend.position, legend.direction = legend.direction) + xlab(xlab) + ylab(ylab)
+        plt <- ggplot(data = df, aes(x = x, y = y)) + mytheme + geom_polygon(aes(fill = z, group=id), color=NA)  + coord_equal() + scale_x_continuous(limits = xlim, expand = c(0, 0)) + scale_y_continuous(limits = ylim, expand = c(0, 0)) + scale_fill_gradientn(labels = labels, colours = colours, guide = guide_colourbar(title = zlab, title.position = ztitleposition, title.hjust = ztitlehjust, title.vjust = ztitlevjust, barwidth = zbarwidth, barheight = zbarheight, title.theme = element_text(angle=titleangle)), limits = zlim) + theme(legend.position = legend.position, legend.direction = legend.direction) + xlab(xlab) + ylab(ylab)
     }
     
     return(plt)

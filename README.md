@@ -12,6 +12,16 @@ A reminder: to install these packages, you can run the following code:
     install.packages("RColorBrewer")
     install.packages("spatialfil")
 
+Including the plotting routine
+------------------------------
+
+For the time being the plotting routine is not an R package, but rather
+it should be included using the source function. The file can be found
+here: [plotimggg.R](http://www.uv.es/mimica/Rblog/pltimggg.R). Put the
+file somewhere (in your working directory, for example) and include it:
+
+    source("pltimggg.R")
+
 2D plots
 --------
 
@@ -20,20 +30,15 @@ A reminder: to install these packages, you can run the following code:
 For it to make any sense to use pltimggg, you need to have a 2D array
 and the corresponding vectors corresponding to each axis. In this
 example we will generate a 100x100 array with axes spanning the interval
-\[0, 1\].
-
-    # source (do not forget to use the correct path to pltimggg.R)
-    source("pltimggg.R")
-
-
+\[1, 11\].
 
     # define array dimensions
     nx <- 100
     ny <- 100
 
     # axes limits
-    xlim = c(0e0, 1e0)
-    ylim = c(0e0, 1e0)
+    xlim = c(1e0, 11e0)
+    ylim = c(1e0, 11e0)
 
     # compute axes
     x <- (0 : (nx - 1)) * (xlim[2] - xlim[1]) / (nx - 1) + xlim[1]
@@ -49,7 +54,7 @@ Now we can try to plot the image using the default settings:
 
     pltimggg.plot2D(x, y, img)
 
-![](README_files/figure-markdown_strict/unnamed-chunk-3-1.png)
+![](README_files/figure-markdown_strict/unnamed-chunk-4-1.png)
 
 ### Parameters
 
@@ -61,7 +66,7 @@ To plot the image in logarithmic scale set zlog to TRUE:
 
     pltimggg.plot2D(x, y, img, zlog=TRUE)
 
-![](README_files/figure-markdown_strict/unnamed-chunk-4-1.png)
+![](README_files/figure-markdown_strict/unnamed-chunk-5-1.png)
 
 #### legend.direction: colourbar direction, default legend.direction = "horizontal"
 
@@ -69,7 +74,7 @@ To plot the colourbar on the right set legend.direction to "vertical":
 
     pltimggg.plot2D(x, y, img, zlog=TRUE, legend.direction = "vertical")
 
-![](README_files/figure-markdown_strict/unnamed-chunk-5-1.png)
+![](README_files/figure-markdown_strict/unnamed-chunk-6-1.png)
 
 #### xlab, ylab and zlab: axes and colourbar labels, default: "x", "y" and "z", respectively
 
@@ -78,21 +83,16 @@ appropriate values to xlab, ylab and zlab:
 
     pltimggg.plot2D(x, y, img, zlog=TRUE, legend.direction = "vertical", xlab="x (degrees)", ylab="y (degrees)", zlab=expression(paste("intensity ["~"erg"~"s"^"-1"~"cm"^"-2"~"arcmin"^"-2"~"]")))
 
-![](README_files/figure-markdown_strict/unnamed-chunk-6-1.png)
-
-#### conv.kernel: image convolution
-
-If we want to perform a simple convolution of the image with a Gaussian
-kernel we have to provide the kernel width (FWHM of the Gaussian) in the
-units in which axes are measured. In our examples the axes go from 0 to
-1. The following command convolves the image shown in the previous
-example with a Gaussin kernel 0.015 units wide:
-
-    pltimggg.plot2D(x, y, img, zlog=TRUE, legend.direction = "vertical", conv.kernel = 0.015)
-
-    ## [1] "Convolving with sigma =  0.015  (pixels =  1.485 )"
-
 ![](README_files/figure-markdown_strict/unnamed-chunk-7-1.png)
+
+#### xlog, ylog: logarithmic scaling of the coordinate axes, default: FALSE
+
+We can also plot in the logarithmic scale by setting xlog and/or ylog to
+TRUE.
+
+    pltimggg.plot2D(x, y, img, zlog=TRUE, legend.direction = "vertical", xlog = TRUE, ylog = TRUE)
+
+![](README_files/figure-markdown_strict/unnamed-chunk-8-1.png)
 
 #### zlinformat: colourscale values format, default zlinformat = FALSE
 
@@ -102,23 +102,54 @@ the scientific notation we set zlinformat to TRUE:
 
     pltimggg.plot2D(x, y, img, zlog=TRUE, legend.direction = "vertical", zlinformat=TRUE)
 
-![](README_files/figure-markdown_strict/unnamed-chunk-8-1.png)
+![](README_files/figure-markdown_strict/unnamed-chunk-9-1.png)
 
-#### zdigits: number of digits in the scientific notation, default zdigits = 1
+#### xlinformat, ylinformat: axes values format, default FALSE
+
+Similar to zlinformat, but for axes. By default nothing special is done
+with the axes, but it can be changed:
+
+    pltimggg.plot2D(x, y, img, zlog=TRUE, legend.direction = "vertical", xlinformat=TRUE)
+
+![](README_files/figure-markdown_strict/unnamed-chunk-10-1.png)
+
+#### xdigits, ydigits and zdigits: number of digits in the scientific notation for the colourbar, default 1
 
 By default only one digit is printed in the scientific notation. To use
-2 set zdigits to 2 (note that this only has an effect when zlinformat =
-TRUE or when plotting in a linear scale \[zlog = FALSE\]):
+2 set xdigits, ydigits or zdigits to 2 (note that this only has an
+effect when xlinformat, ylinformat or zlinformat = TRUE or when plotting
+in a linear scale \[xlog, ylog or zlog = FALSE\]):
 
     pltimggg.plot2D(x, y, img, zlog=TRUE, legend.direction = "vertical", zlinformat=TRUE, zdigits = 2)
 
-![](README_files/figure-markdown_strict/unnamed-chunk-9-1.png)
+![](README_files/figure-markdown_strict/unnamed-chunk-11-1.png)
 
 The parameter has no effect when the powers of ten are used:
 
     pltimggg.plot2D(x, y, img, zlog=TRUE, legend.direction = "vertical", zdigits = 2)
 
-![](README_files/figure-markdown_strict/unnamed-chunk-10-1.png)
+![](README_files/figure-markdown_strict/unnamed-chunk-12-1.png)
+
+An example with the x-axis:
+
+    pltimggg.plot2D(x, y, img, xdigits = 2, xlinformat = TRUE)
+
+![](README_files/figure-markdown_strict/unnamed-chunk-13-1.png)
+
+#### aspect: preserve aspect ratio, default aspect = TRUE
+
+By default, the coordinates have an equal length scale in x and y
+directions. This can cause problems in semilogarithmic plots:
+
+    pltimggg.plot2D(x, y, img, xlog = TRUE)
+
+![](README_files/figure-markdown_strict/unnamed-chunk-14-1.png)
+
+A remedy is to set aspect to FALSE:
+
+    pltimggg.plot2D(x, y, img, xlog = TRUE, aspect = FALSE)
+
+![](README_files/figure-markdown_strict/unnamed-chunk-15-1.png)
 
 #### zbarwidth and zbarheight: colourbar width and height, default: zbarwidth = 20, zbarheight = 1
 
@@ -131,7 +162,7 @@ and zbarheight to 2:
 
     pltimggg.plot2D(x, y, img, zlog=TRUE, zbarwidth=25, zbarheight = 2)
 
-![](README_files/figure-markdown_strict/unnamed-chunk-11-1.png)
+![](README_files/figure-markdown_strict/unnamed-chunk-16-1.png)
 
 For the vertical bar remember that zbarwidth and zbarheight have the
 opposite meaning than in the horizontal case. To reduce the length and
@@ -139,7 +170,7 @@ thickness set zbarheight to 18 and zbarwidth to 0.5:
 
     pltimggg.plot2D(x, y, img, zlog=TRUE, legend.direction = "vertical", zbarheight = 18, zbarwidth = 0.5)
 
-![](README_files/figure-markdown_strict/unnamed-chunk-12-1.png)
+![](README_files/figure-markdown_strict/unnamed-chunk-17-1.png)
 
 #### ztitleposition: colourbar title position, default ztitleposition = "top"
 
@@ -149,7 +180,7 @@ the title below the vertical colourbar set ztitleposition to "bottom":
 
     pltimggg.plot2D(x, y, img, zlog=TRUE, legend.direction = "vertical", ztitleposition = "bottom", zlab="values")
 
-![](README_files/figure-markdown_strict/unnamed-chunk-13-1.png)
+![](README_files/figure-markdown_strict/unnamed-chunk-18-1.png)
 
 Note that the title is rotated by 90 degrees, which is not something we
 may necessarily want here. The next parameter can help.
@@ -164,7 +195,7 @@ may want to print the title horizontally and set ztitleorientation to 0:
 
     pltimggg.plot2D(x, y, img, zlog=TRUE, legend.direction = "vertical", ztitleposition = "bottom", zlab="values", ztitleorientation = 0)
 
-![](README_files/figure-markdown_strict/unnamed-chunk-14-1.png)
+![](README_files/figure-markdown_strict/unnamed-chunk-19-1.png)
 
 #### ztitlehjust and ztitlevjust: title horizontal and vertical justification, default: 0.5 both
 
@@ -177,13 +208,13 @@ Move the title to the bottom:
 
     pltimggg.plot2D(x, y, img, zlog=TRUE, legend.direction = "vertical", zlab="values", ztitlehjust = 0)
 
-![](README_files/figure-markdown_strict/unnamed-chunk-15-1.png)
+![](README_files/figure-markdown_strict/unnamed-chunk-20-1.png)
 
 Move the title to the right:
 
     pltimggg.plot2D(x, y, img, zlog=TRUE, zlab="values", ztitlehjust = 1)
 
-![](README_files/figure-markdown_strict/unnamed-chunk-16-1.png)
+![](README_files/figure-markdown_strict/unnamed-chunk-21-1.png)
 
 #### colours: colourscale to be used, default: internally defined rainbow
 
@@ -195,7 +226,7 @@ plotimggg.plot2D:
     myPalette <- colorRampPalette(c("black", "white"))(100)
     pltimggg.plot2D(x, y, img, zlog=TRUE, legend.direction = "vertical", colours = myPalette)
 
-![](README_files/figure-markdown_strict/unnamed-chunk-17-1.png)
+![](README_files/figure-markdown_strict/unnamed-chunk-22-1.png)
 
 You can also combine the palettes. Let's add another two palettes,
 usefull when particular ranges of values should be emphasized:
@@ -203,7 +234,7 @@ usefull when particular ranges of values should be emphasized:
     myPalette <- c(colorRampPalette(c("black", "white"))(100), colorRampPalette(c("red", "blue"))(100), colorRampPalette(c("magenta", "orange"))(100))
     pltimggg.plot2D(x, y, img, zlog=TRUE, legend.direction = "vertical", colours = myPalette)
 
-![](README_files/figure-markdown_strict/unnamed-chunk-18-1.png)
+![](README_files/figure-markdown_strict/unnamed-chunk-23-1.png)
 
 "Interesting" plots can be generated by shuffling the colours (not the
 use of rbind() instead of c(), also white has been replaced by green):
@@ -211,7 +242,7 @@ use of rbind() instead of c(), also white has been replaced by green):
     myPalette <- rbind(colorRampPalette(c("black", "green"))(100), colorRampPalette(c("green", "red"))(100), colorRampPalette(c("red", "blue"))(100))
     pltimggg.plot2D(x, y, img, zlog=TRUE, legend.direction = "vertical", colours = myPalette)
 
-![](README_files/figure-markdown_strict/unnamed-chunk-19-1.png)
+![](README_files/figure-markdown_strict/unnamed-chunk-24-1.png)
 
 #### theme: ggplot theme to be used, default: internally defined theme
 
@@ -221,11 +252,30 @@ exmple, to use the minimal theme set theme to theme\_minimal():
 
     pltimggg.plot2D(x, y, img, zlog=TRUE, theme = theme_minimal())
 
-![](README_files/figure-markdown_strict/unnamed-chunk-20-1.png)
+![](README_files/figure-markdown_strict/unnamed-chunk-25-1.png)
 
 More information can be obtained by reading the ggplot documentation. Or
 you can copy the definition of "mytheme" from the plotimggg.R and create
 your own custom theme.
+
+#### conv.kernel: image convolution
+
+If we want to perform a simple convolution of the image with a Gaussian
+kernel we have to provide the kernel width (FWHM of the Gaussian) in the
+units in which axes are measured. In our examples the axes go from 1 to
+11. The following command convolves the image shown in the previous
+example with a Gaussin kernel 0.6 units wide:
+
+    pltimggg.plot2D(x, y, img, zlog=TRUE, legend.direction = "vertical", conv.kernel = 0.6)
+
+    ## [1] "Convolving with sigma =  0.6  (pixels =  5.94 )"
+
+![](README_files/figure-markdown_strict/unnamed-chunk-26-1.png)
+
+Note that the convolution is currently performed on the original 2D
+image array, and thus only makes sense when applied to Cartesian
+geometry. Hopefully in the future a more general convolution will be
+implemented.
 
 ### Spherical coordinates
 
@@ -262,15 +312,15 @@ Now we call the routine with the parameter igeom set to 2:
 
     pltimggg.plot2D(sx, sy, simg, legend.direction = "vertical", igeom = 2, zlog=TRUE)
 
-![](README_files/figure-markdown_strict/unnamed-chunk-22-1.png)
+![](README_files/figure-markdown_strict/unnamed-chunk-28-1.png)
 
 We can also plot just a small wedge:
 
     pltimggg.plot2D(sx, sy[250:270], simg[,250:270], legend.direction = "vertical", igeom = 2, zlog=TRUE)
 
-![](README_files/figure-markdown_strict/unnamed-chunk-23-1.png) Or we
+![](README_files/figure-markdown_strict/unnamed-chunk-29-1.png) Or we
 can also plot everything but that small wedge:
 
     pltimggg.plot2D(sx, sy[-(250:270)], simg[,-(250:270)], legend.direction = "vertical", igeom = 2, zlog=TRUE)
 
-![](README_files/figure-markdown_strict/unnamed-chunk-24-1.png)
+![](README_files/figure-markdown_strict/unnamed-chunk-30-1.png)

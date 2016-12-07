@@ -1,4 +1,5 @@
-pltimggg.plot2D <- function(x, y, z, xlim = c(0, 0), ylim = c(0, 0), zlim = c(0, 0), xlab = "x", ylab = "y", zlab = "z", colours = NULL, zbarwidth = 20, zbarheight = 1, ztitleposition = "top", ztitlehjust = 0.5, ztitlevjust = 0.5, legend.position = "bottom", legend.direction = "horizontal", zlog = FALSE, conv.kernel = NULL, zlinformat = FALSE, zdigits = 1, ztitleorientation = NULL, theme = NULL, igeom = 0, xlog = FALSE, ylog = FALSE, aspect = TRUE, xlinformat = FALSE, ylinformat = FALSE, xdigits = 1, ydigits = 1) {
+# This function plots an 2D array "z" given axes vectors "x" and "y".
+pltimggg.plot2D <- function(x, y, z, xlim = c(0, 0), ylim = c(0, 0), zlim = c(0, 0), xlab = "x", ylab = "y", zlab = "z", colours = NULL, zbarwidth = 20, zbarheight = 1, ztitleposition = "top", ztitlehjust = 0.5, ztitlevjust = 0.5, legend.position = "bottom", legend.direction = "horizontal", zlog = FALSE, conv.kernel = NULL, zlinformat = FALSE, zdigits = 1, ztitleorientation = NULL, theme = NULL, igeom = 0, xlog = FALSE, ylog = FALSE, aspect = TRUE, xlinformat = FALSE, ylinformat = FALSE, xdigits = 1, ydigits = 1, clip= FALSE) {
     
     # my theme
     if (is.null(theme)) {
@@ -44,6 +45,12 @@ pltimggg.plot2D <- function(x, y, z, xlim = c(0, 0), ylim = c(0, 0), zlim = c(0,
     
     # expand the coordinate grid
     exp.coords <- expand.grid(x, y)
+    
+    # clip if necesary
+    if (clip) {
+        z[z<zlim[1]] <- zlim[1]
+        z[z>zlim[2]] <- zlim[2]
+    }
     
     # melt the 2D array
     z.melt <- melt(z)
@@ -272,6 +279,7 @@ pltimggg.plot2D <- function(x, y, z, xlim = c(0, 0), ylim = c(0, 0), zlim = c(0,
 }
 
 
+# This function "degrades" a 2D image "img" and the vectors "x" and "y" by returning every "skip"-th element.
 degrade <- function(x, y, img, skip) {
     nx <- length(x)
     ny <- length(y)
@@ -284,4 +292,3 @@ degrade <- function(x, y, img, skip) {
     
     return(retval)
 }
-

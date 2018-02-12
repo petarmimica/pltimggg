@@ -43,8 +43,21 @@ pltimggg.plot2D <- function(x, y, z, xlim = c(0, 0), ylim = c(0, 0), zlim = c(0,
         z <- applyFilter(x = z, kernel = kernel)
     }
     
-    # expand the coordinate grid
+    # expand the coordinate grids
+    xm <- 5e-1 * (x[1:(length(x)-1)] + x[2:length(x)])
+    xm <- c(x[1] - 5e-1 * (x[2] - x[1]), xm)
+    xp <- 5e-1 * (x[1:(length(x)-1)] + x[2:length(x)])
+    xp <- c(xp, x[length(x)] + 5e-1 * (x[length(x)] - x[length(x) - 1]))
+    ym <- 5e-1 * (y[1:(length(y)-1)] + y[2:length(y)])
+    ym <- c(y[1] - 5e-1 * (y[2] - y[1]), ym)
+    yp <- 5e-1 * (y[1:(length(y)-1)] + y[2:length(y)])
+    yp <- c(yp, y[length(y)] + 5e-1 * (y[length(y)] - y[length(y) - 1]))
+    
     exp.coords <- expand.grid(x, y)
+    exp.coords.xm <- expand.grid(xm, y)
+    exp.coords.xp <- expand.grid(xp, y)
+    exp.coords.ym <- expand.grid(x, ym)
+    exp.coords.yp <- expand.grid(x, yp)
     
     # clip if necesary
     if (clip) {
@@ -59,13 +72,11 @@ pltimggg.plot2D <- function(x, y, z, xlim = c(0, 0), ylim = c(0, 0), zlim = c(0,
     if (igeom==2) { # spherical geometry
         
         # compute the spherical grid discretization intervals
-        dx <- x[2] - x[1]
-        dy <- y[2] - y[1]
+        exp.coords$rm = exp.coords.xm$Var1
+        exp.coords$rp = exp.coords.xp$Var1
+        exp.coords$tm = exp.coords.yp$Var2
+        exp.coords$tp = exp.coords.ym$Var2
         
-        exp.coords$rm <- exp.coords$Var1 - dx / 2
-        exp.coords$rp <- exp.coords$rm + dx
-        exp.coords$tm <- exp.coords$Var2 - dy / 2
-        exp.coords$tp <- exp.coords$tm + dy
         exp.coords$stm <- sin(exp.coords$tm)
         exp.coords$stp <- sin(exp.coords$tp)
         exp.coords$ctm <- cos(exp.coords$tm)
@@ -82,20 +93,29 @@ pltimggg.plot2D <- function(x, y, z, xlim = c(0, 0), ylim = c(0, 0), zlim = c(0,
         exp.coords$yOR <- exp.coords$rp * exp.coords$ctp
     
         # fake the limits
-        exp.coords$Var1 = c(min(exp.coords$xIL), max(exp.coords$xOR))
-        exp.coords$Var2 = c(min(exp.coords$yIL), max(exp.coords$yOL))
+        exp.coords$Var1 = rep(min(exp.coords$xIL), length(exp.coords$Var1))
+        exp.coords$Var1[1] = max(exp.coords$xOL)
+        exp.coords$Var2 = rep(min(exp.coords$yIL), length(exp.coords$Var2))
+        exp.coords$Var2[1] = max(exp.coords$yOL)
+            
     }
     
     if (igeom == 0) { # Cartesian geometry
         
-        # compute the grid discretization interval
-        dx <- x[2] - x[1]
-        dy <- y[2] - y[1]
+        # compute the grid discretization intervals
+        dxm <- x[-1] - x[-length(x)]
+        dxm <- c(dxm[1], dxm)
+        dxp <- dxm
+        dxp <- c(dxp, dxp[length(dxp)])
+        dym <- y[-1] - y[-length(y)]
+        dym <- c(dym[1], dym)
+        dyp <- dym
+        dyp <- c(dyp, dyp[length(dyp)])
         
-        exp.coords$xm = exp.coords$Var1 - dx / 2
-        exp.coords$xp = exp.coords$Var1 + dx / 2
-        exp.coords$ym = exp.coords$Var2 - dy / 2
-        exp.coords$yp = exp.coords$Var2 + dy / 2
+        exp.coords$xm = exp.coords.xm$Var1
+        exp.coords$xp = exp.coords.xp$Var1
+        exp.coords$ym = exp.coords.yp$Var2
+        exp.coords$yp = exp.coords.ym$Var2
         
         # generate the four corners of each element (inner-left, inner-right, outer-left, outer-right)
         exp.coords$xIL <- exp.coords$xm
@@ -108,8 +128,10 @@ pltimggg.plot2D <- function(x, y, z, xlim = c(0, 0), ylim = c(0, 0), zlim = c(0,
         exp.coords$yOR <- exp.coords$yp
         
         # fake the limits
-        exp.coords$Var1 = c(min(exp.coords$xIL), max(exp.coords$xOR))
-        exp.coords$Var2 = c(min(exp.coords$yIL), max(exp.coords$yOL))
+        exp.coords$Var1 = rep(min(exp.coords$xIL), length(exp.coords$Var1))
+        exp.coords$Var1[1] = max(exp.coords$xOL)
+        exp.coords$Var2 = rep(min(exp.coords$yIL), length(exp.coords$Var2))
+        exp.coords$Var2[1] = max(exp.coords$yOL)
         
     }
     
@@ -258,7 +280,7 @@ pltimggg.plot2D <- function(x, y, z, xlim = c(0, 0), ylim = c(0, 0), zlim = c(0,
     ids = 1:length(z.melt$value)
     
     # create a data frame with image only
-    vals <- data.frame(id = ids, z = z.melt$value)
+    vals <- data.table(id = ids, z = z.melt$value)
     
     # for coordinates we will create a data frame that contains the four vertices of each pixel and  assign them the same id that corresponds to the image pixel
     xs <- unlist(lapply(1:length(z.melt$value), function(i) {
@@ -268,7 +290,7 @@ pltimggg.plot2D <- function(x, y, z, xlim = c(0, 0), ylim = c(0, 0), zlim = c(0,
     ys <- unlist(lapply(1:length(z.melt$value), function(i) {
         c(exp.coords$yIL[i], exp.coords$yIR[i], exp.coords$yOR[i], exp.coords$yOL[i])  
     }))
-    pos <- data.frame(id = rep(ids, each=4), x = xs, y = ys)
+    pos <- data.table(id = rep(ids, each=4), x = xs, y = ys)
     
     df <- merge(vals, pos, by = c("id"))
     
